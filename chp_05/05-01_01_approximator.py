@@ -26,16 +26,17 @@ class Net(torch.nn.Module):
         return y1, y2
 
 x = torch.unsqueeze(torch.linspace(-1, 1, 50), dim=1)
-for f in [f1, f2, f3, f4]:
+f_list = [f1, f2, f3, f4]
+for i in range(4):
     # Generate data
-    y = f(x)
+    y = f_list[i](x)
     # Build Network
     net = Net(n_feature=1, n_hidden=3, n_output=1)
     print(net)
     # Training
     optimizer = torch.optim.SGD(net.parameters(), lr=0.5)
     loss_func = torch.nn.MSELoss()
-    for i in range(500):
+    for step in range(500):
         _, y2 = net(x)
         loss = loss_func(y, y2)
         optimizer.zero_grad()
@@ -43,10 +44,11 @@ for f in [f1, f2, f3, f4]:
         optimizer.step()
     # Visualization
     y1, y2 = net(x)
-    plt.cla()
+    plt.subplot(2, 2, i + 1)
     plt.plot(x.data.numpy(), y1.data.numpy().take(0, 1), "--", color="green", linewidth=1)
     plt.plot(x.data.numpy(), y1.data.numpy().take(1, 1), "--", color="yellow", linewidth=1)
     plt.plot(x.data.numpy(), y1.data.numpy().take(2, 1), "--", color="magenta", linewidth=1)
     plt.plot(x.data.numpy(), y2.data.numpy(), color="red", linewidth=1)
-    plt.scatter(x.data.numpy(), y.data.numpy(), color="blue")
-    plt.show()
+    plt.scatter(x.data.numpy(), y.data.numpy(), s=1, color="blue")
+
+plt.show()
